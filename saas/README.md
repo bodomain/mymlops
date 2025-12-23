@@ -63,7 +63,7 @@ saas/
 
 ### Backend API
 
-**Separate FastAPI Service** (in `api/` folder):
+**FastAPI Service** (in `api/` folder):
 - Endpoint: `GET /api`
 - Authentication: Validates JWT token from Clerk
 - Functionality: Calls OpenAI GPT-5 Nano to generate business ideas
@@ -71,17 +71,18 @@ saas/
 
 **To run locally**:
 ```bash
-cd api
-pip install -r ../requirements.txt
+pip install -r requirements.txt
 export OPENAI_API_KEY=sk_...
-uvicorn index:app --reload --port 8000
+uvicorn api.index:app --reload --port 8000
 ```
+
+**Deployment**: Automatically deployed by Vercel as a serverless Python function (alongside Next.js frontend)
 
 ### Frontend-Backend Connection
 
-- Frontend calls `/api` endpoint with JWT token
-- For local dev: Update fetch URL in `pages/product.tsx` to `http://localhost:8000/api`
-- For production: API and frontend are deployed separately; use Vercel rewrites or proxy
+- Frontend calls `/api` endpoint with JWT token (same origin)
+- For local dev: Run `uvicorn api.index:app --reload --port 8000` separately and update fetch URL to `http://localhost:8000/api`
+- For production: Both deployed on Vercel; no additional configuration needed
 
 ### Development Stack
 
@@ -93,18 +94,14 @@ uvicorn index:app --reload --port 8000
 
 ### Deployment
 
-**Frontend** (Vercel):
+**Full Stack on Vercel**:
 ```bash
 vercel --prod
 ```
-- Deployed as serverless functions
-- Includes API routes for subscription checks
-- Environment variables: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`
-
-**Backend** (FastAPI):
-- Runs on a separate server (e.g., Render, Railway, AWS)
-- Requires: `OPENAI_API_KEY` environment variable
-- Fronend points to this backend via API URL
+- Automatically detects and deploys both Next.js frontend AND FastAPI backend
+- Frontend: Serverless Node.js functions
+- Backend: Serverless Python functions
+- Environment variables: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `OPENAI_API_KEY`
 
 ### Example Features
 
