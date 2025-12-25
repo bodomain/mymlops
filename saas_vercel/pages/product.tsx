@@ -37,8 +37,7 @@ function ConsultationForm() {
         const controller = new AbortController();
         let buffer = '';
 
-        // Both frontend and backend are on same origin (same Docker container)
-        await fetchEventSource('/api/consultation', {
+        await fetchEventSource('/api', {
             signal: controller.signal,
             method: 'POST',
             headers: {
